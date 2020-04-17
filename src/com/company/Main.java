@@ -1,14 +1,31 @@
 package com.company;
+
+import tables.school_body;
+
 import java.sql.*;
 public class Main {
-    //private static final String USERNAME = "TheoCalianos";
-    private static final String USERNAME = "root";
-    private static final String PASSWORD = "root";
-    //private static final String PASSWORD = "TheoCalianos";
-    private static final String CONN = "jdbc:mysql://localhost:3306/college";
+
     public static void main(String args[]) throws SQLException {
-        Connection con = null;
-        con = DriverManager.getConnection(CONN,USERNAME,PASSWORD);
-        System.out.println("Connected");
+
+
+        try(Connection con = DBConnection.getConnection();
+            Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = stmt.executeQuery("SELECT * FROM School");){
+            //school_body.getStudents(rs);
+            rs.last();
+
+            System.out.println("Last Student is " + rs.getInt("Student Id") + " " + rs.getString("Student Name"));
+
+            rs.first();
+            System.out.println("First Student is " + rs.getInt("Student Id") + " " + rs.getString("Student Name"));
+
+            rs.absolute(2);
+            System.out.println("Student is " + rs.getInt("Student Id") + " " + rs.getString("Student Name"));
+
+        }
+        catch (SQLException e)
+        {
+            System.err.print(e);
+        }
     }
 }
