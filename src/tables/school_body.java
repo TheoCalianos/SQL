@@ -8,7 +8,7 @@ public class school_body {
         while(rs.next()){
             StringBuffer buffer = new StringBuffer();
             buffer.append("Student ID" + rs.getInt("Student Id"));
-            buffer.append(rs.getString("Student Name"));
+            buffer.append(rs.getString("StudentName"));
             //System.out.println(buffer.toString());
 
         }

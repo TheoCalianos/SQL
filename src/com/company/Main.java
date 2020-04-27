@@ -5,27 +5,34 @@ import tables.school_body;
 import java.sql.*;
 public class Main {
 
+    private static final String SQL = "SELECT * FROM School WHERE StudentName LIKE?";
     public static void main(String args[]) throws SQLException {
-
-
-        try(Connection con = DBConnection.getConnection();
-            Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            ResultSet rs = stmt.executeQuery("SELECT * FROM School");){
-            //school_body.getStudents(rs);
-            rs.last();
-
-            System.out.println("Last Student is " + rs.getInt("Student Id") + " " + rs.getString("Student Name"));
-
-            rs.first();
-            System.out.println("First Student is " + rs.getInt("Student Id") + " " + rs.getString("Student Name"));
-
-            rs.absolute(2);
-            System.out.println("Student is " + rs.getInt("Student Id") + " " + rs.getString("Student Name"));
-
+        String name;
+        try{
+            name = Input.getString("enter name of student");
         }
-        catch (SQLException e)
+        catch (Exception e)
         {
-            System.err.print(e);
+            System.err.println("Invalid name");
+            return;
+        }
+        ResultSet rs = null;
+        try {
+            Connection conn = DBConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(SQL, ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+            stmt.setString(1,name);
+
+            rs = stmt.executeQuery();
+            school_body.getStudents(rs);
+        }
+        catch (Exception e)
+        {
+            System.err.println(e);
+        }
+        finally {
+            if(rs != null){
+                rs.close();
+            }
         }
     }
 }
